@@ -39,6 +39,8 @@ class Keys(models.Model):
     twitter_api = models.CharField(max_length = 50, blank=True, null=True)
     twitter_secret = models.CharField(max_length = 50, blank=True, null=True)
     twitter_token = models.CharField(max_length = 200, blank=True, null=True)
+    instagram_api = models.CharField(max_length = 200, blank=True, null=True)
+    instagram_secret = models.CharField(max_length = 50, blank=True, null=True)
     user = models.OneToOneField(User, primary_key=True)
 
     class Meta:

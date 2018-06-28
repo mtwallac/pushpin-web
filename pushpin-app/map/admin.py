@@ -11,6 +11,7 @@ class KeysAdmin(admin.ModelAdmin):
     fieldsets = [
             (None,         {'fields': ['flickr_api', 'google_api', 'shodan_api']}),
             ('Twitter',    {'fields': ['twitter_api', 'twitter_secret'], 'classes': ['collapse']}),
+            ('Instagram',    {'fields': ['instagram_api', 'instagram_secret'], 'classes': ['collapse']}),
             ]
 
 admin.site.register(Keys, KeysAdmin)

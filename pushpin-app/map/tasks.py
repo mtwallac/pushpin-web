@@ -6,13 +6,13 @@ import dateutil.parser
 import json
 import logging
 
-from modules import flickr, twitter, youtube, picasa, shodan
+from modules import flickr, twitter, youtube, picasa, shodan, instagram
 from map.models import Pushpin, Location
 
 logger = logging.getLogger('pushpin')
 
 @shared_task
-@periodic_task(run_every=crontab(minute=0,hour="*/1"))
+@periodic_task(run_every=crontab(minute="*/1"))
 def twitterTask():
     locations = list(Location.objects.order_by('-date'))
 
@@ -23,7 +23,7 @@ def twitterTask():
     return
 
 @shared_task
-@periodic_task(run_every=crontab(minute="*/30"))
+@periodic_task(run_every=crontab(minute="*/1"))
 def youtubeTask():
     locations = list(Location.objects.order_by('-date'))
 
@@ -34,7 +34,7 @@ def youtubeTask():
     return
 
 @shared_task
-@periodic_task(run_every=crontab(minute=0,hour="*/1"))
+@periodic_task(run_every=crontab(minute="*/1"))
 def picasaTask():
     locations = list(Location.objects.order_by('-date'))
 
@@ -45,7 +45,7 @@ def picasaTask():
     return
 
 @shared_task
-@periodic_task(run_every=crontab(hour="*/24"))
+@periodic_task(run_every=crontab(minute="*/1"))
 def shodanTask():
     locations = list(Location.objects.order_by('-date'))
 
@@ -56,11 +56,21 @@ def shodanTask():
     return
 
 @shared_task
-@periodic_task(run_every=crontab(minute="*/15"))
+@periodic_task(run_every=crontab(minute="*/1"))
 def flickrTask():
     locations = list(Location.objects.order_by('-date'))
 
     module = flickr.Flickr()
+
+    for location in locations:
+        runModule(module, location)
+
+@shared_task
+@periodic_task(run_every=crontab(minute="*/1"))
+def instagramTask():
+    locations = list(Location.objects.order_by('-date'))
+
+    module = instagram.Instagram()
 
     for location in locations:
         runModule(module, location)
@@ -79,9 +89,8 @@ def runModule(module, location):
         # module hasn't been run before (no entry in "last run" column)
         logger.debug("First time running module for this location.")
         two_years_ago = datetime.now(timezone.utc).astimezone() - timedelta(days=365*2)
-        logger.debug("Two years ago: {}".format(two_years_ago))
-        #two_years_ago = datetime.now() - timedelta(days=365*2)
-        latestData = two_years_ago
+        latestData = datetime.date(2018, 6, 14).astimezone() - timedelta(days=2)
+        logger.debug("My date: {} || Their date".format(latestData, two_years_ago))
 
     logger.debug("{} module last run {} for this location.".format(module.name, latestData))
 
